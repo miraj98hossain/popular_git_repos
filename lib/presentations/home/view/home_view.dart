@@ -152,6 +152,8 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                     Text(
                                       repo.description ?? "",
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
                                       style: lightTextTheme.bodySmall!.copyWith(
                                         color: Colors.grey,
                                         fontWeight: FontWeight.w600,
