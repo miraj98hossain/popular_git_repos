@@ -6,7 +6,7 @@ import 'package:popular_git_repos/core/extentions/extentations.dart';
 
 import 'package:popular_git_repos/core/theme/app_theme.dart';
 import 'package:popular_git_repos/data/models/repositories_response.dart';
-import 'package:popular_git_repos/features/home/bloc/repository_list_bloc.dart';
+import 'package:popular_git_repos/presentations/home/bloc/repository_list_bloc.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

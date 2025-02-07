@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:popular_git_repos/features/home/home.dart';
+import 'package:popular_git_repos/presentations/home/home.dart';
 
 class AppNavigation {
   AppNavigation._();
