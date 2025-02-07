@@ -19,21 +19,6 @@ mixin DecoderServiceMixin {
         } else {
           return jsonBody as T;
         }
-
-      case 401:
-        var isAuthResponse = T.toString();
-
-        if (isAuthResponse == "AuthResponse") {
-          var jsonBody = await response.stream.bytesToString();
-          if (decoder != null) {
-            return decoder(jsonBody);
-          } else {
-            return jsonBody as T;
-          }
-        } else {
-          throw UnauthorizedException();
-        }
-
       case 400:
         throw BadRequestException();
 
