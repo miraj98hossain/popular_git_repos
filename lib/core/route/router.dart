@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:popular_git_repos/presentations/home/home.dart';
+import 'package:popular_git_repos/presentations/repo_details/view/repo_details_page.dart';
 
 class AppNavigation {
   AppNavigation._();
@@ -8,19 +9,29 @@ class AppNavigation {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
   static final router = GoRouter(
-      navigatorKey: _rootNavigatorKey,
-      initialLocation: HomePage.routePath,
-      debugLogDiagnostics: true,
-      routes: [
-        GoRoute(
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: HomePage.routePath,
+    debugLogDiagnostics: true,
+    routes: [
+      GoRoute(
           path: HomePage.routePath,
           name: HomePage.routeName,
           pageBuilder: (context, state) => getPage(
-            child: const HomePage(),
-            state: state,
-          ),
-        ),
-      ]);
+                child: const HomePage(),
+                state: state,
+              ),
+          routes: [
+            GoRoute(
+              path: RepoDetailsPage.routePath,
+              name: RepoDetailsPage.routeName,
+              pageBuilder: (context, state) => getPage(
+                child: const RepoDetailsPage(),
+                state: state,
+              ),
+            ),
+          ]),
+    ],
+  );
 
   static Page getPage({
     required Widget child,

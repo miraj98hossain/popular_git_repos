@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:popular_git_repos/core/extentions/extentations.dart';
 
 import 'package:popular_git_repos/core/theme/app_theme.dart';
 import 'package:popular_git_repos/data/models/repositories_response.dart';
 import 'package:popular_git_repos/presentations/home/bloc/repository_list_bloc.dart';
+import 'package:popular_git_repos/presentations/repo_details/view/repo_details_page.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -67,104 +69,109 @@ class _HomeViewState extends State<HomeView> {
                           itemBuilder: (context, index) {
                             var repo = state.repositoryList[index];
 
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: appTheme.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1,
+                            return GestureDetector(
+                              onTap: () {
+                                context.pushNamed(RepoDetailsPage.routeName);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: appTheme.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1,
+                                  ),
                                 ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Image.network(
-                                        repo.owner?.avatarUrl ?? "",
-                                        width: 25,
-                                        height: 25,
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          repo.fullName ?? "",
-                                          style: lightTextTheme.bodyMedium!
-                                              .copyWith(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Image.network(
+                                          repo.owner?.avatarUrl ?? "",
+                                          width: 25,
+                                          height: 25,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            repo.fullName ?? "",
+                                            style: lightTextTheme.bodyMedium!
+                                                .copyWith(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    repo.description ?? "",
-                                    style: lightTextTheme.bodySmall!.copyWith(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w600,
+                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Visibility(
-                                        visible: repo.language != null,
-                                        child: Row(
+                                    Text(
+                                      repo.description ?? "",
+                                      style: lightTextTheme.bodySmall!.copyWith(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Visibility(
+                                          visible: repo.language != null,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                repo.language ?? "",
+                                                style: lightTextTheme.bodySmall!
+                                                    .copyWith(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Row(
                                           children: [
+                                            Icon(
+                                              Icons.star_border_outlined,
+                                              color: Colors.grey,
+                                            ),
                                             Text(
-                                              repo.language ?? "",
+                                              '${((repo.stargazersCount ?? 0) / 1000).truncate()}K',
                                               style: lightTextTheme.bodySmall!
                                                   .copyWith(
                                                 color: Colors.grey,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
                                           ],
                                         ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star_border_outlined,
-                                            color: Colors.grey,
-                                          ),
-                                          Text(
-                                            '${((repo.stargazersCount ?? 0) / 1000).truncate()}K',
-                                            style: lightTextTheme.bodySmall!
-                                                .copyWith(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        _getUpdateAtString(repo),
-                                        style:
-                                            lightTextTheme.bodySmall!.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w600,
+                                        const SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                                        Text(
+                                          _getUpdateAtString(repo),
+                                          style: lightTextTheme.bodySmall!
+                                              .copyWith(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             );
                           },
