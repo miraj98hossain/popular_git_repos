@@ -23,7 +23,45 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     context.read<RepositoryListBloc>().add(RepositoryListGet());
+    _doclistScrollController.addListener(() {
+      if (_doclistScrollController.position.pixels ==
+          _doclistScrollController.position.maxScrollExtent) {
+        _fetchDoctorList();
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _doclistScrollController.dispose();
+
+    super.dispose();
+  }
+
+  void _fetchDoctorList() {
+    context.read<RepositoryListBloc>().add(RepositoryListGet());
+  }
+
+  String _getUpdateAtString(Repository repo) {
+    {
+      if (repo.pushedAt != null) {
+        var duration = DateTime.now()
+            .toLocal()
+            .difference(DateTime.parse(repo.pushedAt!).toLocal());
+
+        if (duration.inDays > 0 && duration.inDays <= 20) {
+          return "Updated ${duration.inDays} days ago";
+        } else if (duration.inDays > 20) {
+          return "Updated ${DateTime.parse(repo.pushedAt!).toFormatedString("MMM d, yyyy")}  ago";
+        } else if (duration.inDays == 0 && duration.inHours > 0) {
+          return "Updated ${duration.inHours} hours ago";
+        } else if (duration.inHours == 0 && duration.inMinutes > 0) {
+          return "Updated ${duration.inMinutes} minutes ago";
+        }
+      }
+      return "";
+    }
   }
 
   @override
@@ -71,7 +109,8 @@ class _HomeViewState extends State<HomeView> {
 
                             return GestureDetector(
                               onTap: () {
-                                context.pushNamed(RepoDetailsPage.routeName);
+                                context.pushNamed(RepoDetailsPage.routeName,
+                                    extra: repo);
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -196,26 +235,5 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
-  }
-
-  String _getUpdateAtString(Repository repo) {
-    {
-      if (repo.pushedAt != null) {
-        var duration = DateTime.now()
-            .toLocal()
-            .difference(DateTime.parse(repo.pushedAt!).toLocal());
-
-        if (duration.inDays > 0 && duration.inDays <= 20) {
-          return "Updated ${duration.inDays} days ago";
-        } else if (duration.inDays > 20) {
-          return "Updated ${DateTime.parse(repo.pushedAt!).toFormatedString("MMM d, yyyy")}  ago";
-        } else if (duration.inDays == 0 && duration.inHours > 0) {
-          return "Updated ${duration.inHours} hours ago";
-        } else if (duration.inHours == 0 && duration.inMinutes > 0) {
-          return "Updated ${duration.inMinutes} minutes ago";
-        }
-      }
-      return "";
-    }
   }
 }

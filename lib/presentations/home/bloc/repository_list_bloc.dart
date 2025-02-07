@@ -64,7 +64,7 @@ class RepositoryListBloc
           emit(
             state.copyWith(
               isLoading: false,
-              repositoryList: response,
+              repositoryList: state.repositoryList..addAll(response),
             ),
           );
         } else {
