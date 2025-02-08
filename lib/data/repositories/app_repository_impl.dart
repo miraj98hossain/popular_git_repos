@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:popular_git_repos/app/cubit/internet_checker_cubit.dart';
 import 'package:popular_git_repos/data/data_sources/app_local_data_source.dart';
 import 'package:popular_git_repos/data/data_sources/app_remote_data_source.dart';
@@ -22,11 +24,12 @@ class AppRepositoryImpl implements AppRepository {
         page: page,
       );
       for (var repo in response.items ?? []) {
+        log("Miraj Log");
         await appLocalDataSource.insertOrUpdateRepository(repo);
       }
       return response.items ?? [];
     } else {
-      return await appLocalDataSource.getRepositories(offset: (page - 1) * 10);
+      return await appLocalDataSource.getRepositories(offset: ((page - 1) * 10));
     }
   }
 

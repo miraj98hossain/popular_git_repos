@@ -26,7 +26,8 @@ class LocalDatabase {
       onCreate: (db, version) async {
         await db.execute('''
       CREATE TABLE repositories (
-        id INTEGER PRIMARY KEY,
+        repo_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
         node_id TEXT,
         name TEXT,
         full_name TEXT,

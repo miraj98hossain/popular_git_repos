@@ -38,8 +38,10 @@ class AppLocalDataSourceImpl implements AppLocalDataSource {
     final db = _database;
 
     // Insert or update Owner
-    await insertOrUpdateOwner(repository.owner!);
 
+    if (repository.owner != null) {
+      await insertOrUpdateOwner(repository.owner!);
+    }
     // Insert or update License (if exists)
     if (repository.license != null) {
       await insertOrUpdateLicense(repository.license!);
@@ -84,11 +86,17 @@ class AppLocalDataSourceImpl implements AppLocalDataSource {
         where: 'node_id = ?',
         whereArgs: [licenseNodeId],
       );
-      License license = License.fromMap(licenseMaps.first);
+      License? license;
+      if(licenseMaps.isNotEmpty){
+        license=License.fromMap(licenseMaps.first);
+      }
 
       // Create Repository object
-      final repository = Repository.fromTabMap(repoMap);
-
+      var repository = Repository.fromTabMap(repoMap);
+     repository = repository.copyWith(
+       owner: owner,
+       license: license
+     );
       repositories.add(repository);
     }
 
