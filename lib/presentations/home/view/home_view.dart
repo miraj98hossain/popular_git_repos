@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:popular_git_repos/app/cubit/internet_checker_cubit.dart';
 import 'package:popular_git_repos/core/extentions/extentations.dart';
 
 import 'package:popular_git_repos/core/theme/app_theme.dart';
@@ -17,13 +20,20 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  final _doclistScrollController = ScrollController();
+  final _repoListScrollController = ScrollController();
   @override
   void initState() {
-    context.read<RepositoryListBloc>().add(RepositoryListGet());
-    _doclistScrollController.addListener(() {
-      if (_doclistScrollController.position.pixels ==
-          _doclistScrollController.position.maxScrollExtent) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<InternetCheckerCubit>().checkConnection();
+      if (context.mounted) {
+        context.read<InternetCheckerCubit>().trackConnection();
+      }
+
+      _fetchDoctorList();
+    });
+    _repoListScrollController.addListener(() {
+      if (_repoListScrollController.position.pixels ==
+          _repoListScrollController.position.maxScrollExtent) {
         _fetchDoctorList();
       }
     });
@@ -32,13 +42,14 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
-    _doclistScrollController.dispose();
+    _repoListScrollController.dispose();
 
     super.dispose();
   }
 
   void _fetchDoctorList() {
-    context.read<RepositoryListBloc>().add(RepositoryListGet());
+    var status = context.read<InternetCheckerCubit>().state.connectionStatus;
+    context.read<RepositoryListBloc>().add(RepositoryListGet(status: status));
   }
 
   String _getUpdateAtString(Repository repo) {
@@ -83,6 +94,11 @@ class _HomeViewState extends State<HomeView> {
         ),
         child: Column(
           children: [
+            // BlocBuilder<InternetCheckerCubit, InternetCheckerState>(
+            //   builder: (context, state) {
+            //     return Text(state.connectionStatus.name);
+            //   },
+            // ),
             Expanded(
               child: BlocBuilder<RepositoryListBloc, RepositoryListState>(
                 builder: (context, state) {
@@ -94,7 +110,7 @@ class _HomeViewState extends State<HomeView> {
 
                   if (state.repositoryList.isNotEmpty) {
                     return CustomScrollView(
-                      controller: _doclistScrollController,
+                      controller: _repoListScrollController,
                       physics: const BouncingScrollPhysics(),
                       slivers: [
                         SliverList.separated(
@@ -129,6 +145,17 @@ class _HomeViewState extends State<HomeView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Image.network(
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Icon(Icons.error_outlined);
+                                          },
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return const CircularProgressIndicator();
+                                          },
                                           repo.owner?.avatarUrl ?? "",
                                           width: 25,
                                           height: 25,

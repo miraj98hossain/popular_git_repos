@@ -3,13 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:popular_git_repos/data/models/repositories_response.dart';
 import 'package:popular_git_repos/domain/repositories/app_repository.dart';
 
+import '../../../app/cubit/internet_checker_cubit.dart';
+
 @immutable
 sealed class RepositoryListEvent {}
 
 final class RepositoryListGet extends RepositoryListEvent {
   final int? page;
-
-  RepositoryListGet({this.page});
+  final ConnectionStatus status;
+  RepositoryListGet({this.page, required this.status});
 }
 
 class RepositoryListState {
@@ -60,7 +62,11 @@ class RepositoryListBloc
       try {
         page++;
         if (page <= 100) {
-          var response = await _repository.getRespositoris(page: page);
+          var response = await _repository.getRespositoris(
+            page: page,
+            status: event.status,
+          );
+
           emit(
             state.copyWith(
               isLoading: false,
