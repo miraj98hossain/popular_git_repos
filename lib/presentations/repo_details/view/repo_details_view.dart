@@ -44,18 +44,23 @@ class _RepoDetailsViewState extends State<RepoDetailsView> {
             children: [
               Align(
                 alignment: Alignment.center,
-                child: Container(
-                  height: 100,
+                child: Image.network(
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      Icons.error_outlined,
+                      color: appTheme.white,
+                      size: 100,
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                  widget.repository.owner?.avatarUrl ?? "",
                   width: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          widget.repository.owner?.avatarUrl ?? ''),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  height: 100,
                 ),
               ),
               const SizedBox(height: 10),
