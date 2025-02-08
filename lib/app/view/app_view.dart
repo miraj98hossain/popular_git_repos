@@ -11,9 +11,8 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => InternetCheckerCubit()
-        ..checkConnection()
-        ..trackConnection(),
+      lazy: false,
+      create: (context) => InternetCheckerCubit(),
       child: MaterialApp.router(
         title: 'Delta Hospital',
         debugShowCheckedModeBanner: false,
